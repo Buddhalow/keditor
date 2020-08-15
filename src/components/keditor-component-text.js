@@ -1,14 +1,14 @@
 import '../styles/keditor-component-text.less';
 
 import KEditor from 'keditor';
-import CKEDITOR from 'ckeditor';
-
-CKEDITOR.disableAutoInline = true;
+import {Editor, EditorState} from 'draft-js';
+import summernote from 'summernote';
+//CKEDITOR.disableAutoInline = true;
 
 // Fix issue: Scroll to bottom when pasting text or pressing ENTER in CKEditor
-CKEDITOR.dom.element.prototype.scrollIntoView = () => { return; };
-CKEDITOR.dom.selection.prototype.scrollIntoView = () => { return; };
-CKEDITOR.dom.range.prototype.scrollIntoView = () => { return; };
+//CKEDITOR.dom.element.prototype.scrollIntoView = () => { return; };
+//CKEDITOR.dom.selection.prototype.scrollIntoView = () => { return; };
+//CKEDITOR.dom.range.prototype.scrollIntoView = () => { return; };
 
 // Text component
 // ---------------------------------------------------------------------
@@ -60,15 +60,13 @@ KEditor.components['text'] = {
             }
         });
 
-        let editor = CKEDITOR.inline(componentContent[0], self.options);
-        editor.on('instanceReady', function () {
-            $('#cke_' + componentContent.attr('id')).appendTo(keditor.wrapper);
-
-            if (typeof options.onComponentReady === 'function') {
-                options.onComponentReady.call(contentArea, component, editor);
-            }
+        componentContent.summernote({
+            disableDragAndDrop: true
         });
-
+        componentContent.on('click', function (e){
+            componentContent.summernote('focus');
+            componentContent.summernote('destroy');
+        });
         editor.on('key', function (event) {
             const isCtrl = event.data.domEvent.$.ctrlKey;
             if ((isCtrl && event.data.domEvent.$.keyCode === 86) || event.data.domEvent.$.keyCode === 13) {
@@ -83,18 +81,19 @@ KEditor.components['text'] = {
                     // keditor.iframeBody.scrollTop($(editor.element.$).offset().top);
                 }, 10);
             }
-        }, editor);
+        }, editor);*/
     },
 
     getContent: function (component, keditor) {
         let componentContent = component.find('.keditor-component-content');
         let id = componentContent.attr('id');
-        let editor = CKEDITOR.instances[id];
-        if (editor) {
+        //let editor = CKEDITOR.instances[id];
+        return $('#' + id).summernote('code');
+        /* if (editor) {
             return editor.getData();
         } else {
             return componentContent.html();
-        }
+        } */
     },
 
     destroy: function (component, keditor) {
